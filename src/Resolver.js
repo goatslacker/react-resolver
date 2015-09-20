@@ -54,8 +54,6 @@ export default class Resolver extends React.Component {
     );
 
     return Promise.all(queue).then((results) => {
-      const data = { ...initialData };
-
       const actions = results.reduce((actions, { resolved }) => {
         return actions.concat(Object.keys(resolved).reduce((all, key) => {
           return all.concat(resolved[key].action)
