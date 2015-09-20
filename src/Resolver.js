@@ -56,7 +56,19 @@ export default class Resolver extends React.Component {
     return Promise.all(queue).then((results) => {
       const data = { ...initialData };
 
-      results.forEach(({ id, resolved }) => data[id] = resolved);
+      const actions = results.reduce((actions, { resolved }) => {
+        return actions.concat(Object.keys(resolved).reduce((all, key) => {
+          return all.concat(resolved[key].action)
+        }, []))
+      }, [])
+
+      const data = results.reduce((data, { resolved, id }) => {
+        data[id] = {}
+        Object.keys(resolved).forEach((key) => {
+          data[id][key] = resolved[key].value
+        })
+        return data
+      }, { ...initialData })
 
       if (Object.keys(initialData).length < Object.keys(data).length) {
         return Resolver.resolve(render, data);
@@ -74,7 +86,7 @@ export default class Resolver extends React.Component {
         }
       }
 
-      return { data, Resolved };
+      return { data, Resolved, actions };
     });
   }
 
