@@ -280,9 +280,17 @@ export default class Resolver extends React.Component {
         return false;
       }
 
+      // call all the actions
+      // record all the values
+      const values = Object.keys(resolved).reduce((res, key) => {
+        resolved[key].action()
+        res[key] = resolved[key].value
+        return res
+      }, {})
+
       const nextState = {
         pending: {},
-        resolved: { ...state.resolved, ...resolved },
+        resolved: { ...state.resolved, ...values },
       };
 
       this.setState(nextState);
